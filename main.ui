@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Window</class>
+ <widget class="QMainWindow" name="Window">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>585</width>
+    <height>475</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Прокси SOCKS5</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QTabWidget" name="tabWidgetServer">
+    <property name="geometry">
+     <rect>
+      <x>1</x>
+      <y>0</y>
+      <width>580</width>
+      <height>450</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="tabServer">
+     <attribute name="title">
+      <string>Сервер</string>
+     </attribute>
+     <widget class="QGroupBox" name="groupBoxLog">
+      <property name="geometry">
+       <rect>
+        <x>13</x>
+        <y>90</y>
+        <width>550</width>
+        <height>320</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Информация</string>
+      </property>
+      <widget class="QScrollArea" name="scrollAreaLog">
+       <property name="geometry">
+        <rect>
+         <x>6</x>
+         <y>30</y>
+         <width>540</width>
+         <height>280</height>
+        </rect>
+       </property>
+       <property name="cursor" stdset="0">
+        <cursorShape>IBeamCursor</cursorShape>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>538</width>
+          <height>278</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBoxServer">
+      <property name="geometry">
+       <rect>
+        <x>13</x>
+        <y>10</y>
+        <width>550</width>
+        <height>70</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Запуск прокси SOCKS5</string>
+      </property>
+      <widget class="QLineEdit" name="lineEditProxyAddress">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>30</y>
+         <width>400</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhNone</set>
+       </property>
+       <property name="placeholderText">
+        <string>socks5://login:password@1.2.3.4:9090</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButtonStartServer">
+       <property name="geometry">
+        <rect>
+         <x>440</x>
+         <y>30</y>
+         <width>100</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Запуск</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Настройки</string>
+     </attribute>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>551</width>
+        <height>401</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Здесь нет настроек</string>
+      </property>
+      <widget class="QPushButton" name="pushButtonWhy">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>30</y>
+         <width>86</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Почему?</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
