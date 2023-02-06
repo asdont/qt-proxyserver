@@ -109,7 +109,7 @@
         <string>Запустить</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="lineEditserverLogin">
+      <widget class="QLineEdit" name="lineEditServerLogin">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -167,22 +167,6 @@
        </property>
        <property name="placeholderText">
         <string>Порт</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushButtonServerStop">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>440</x>
-         <y>63</y>
-         <width>100</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Остановить</string>
        </property>
       </widget>
      </widget>

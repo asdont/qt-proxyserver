@@ -6,6 +6,7 @@ import (
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/widgets"
 
+	"qt-proxyserver/internal/logger"
 	"qt-proxyserver/internal/server"
 	"qt-proxyserver/internal/settings"
 	"qt-proxyserver/uicustom"
@@ -37,7 +38,9 @@ func NewServerWidget(parent widgets.QWidget_ITF) *Window {
 	uicustom.SetupWindowCustom(window.Widget)
 	uicustom.SetupUICustom(uiMainWindow)
 
-	server.Server(uiMainWindow)
+	uicustom.FieldsMaskValidator(uiMainWindow)
+
+	server.Server(uiMainWindow, server.CompileRegexps(), logger.NewTEditLogger(uiMainWindow.TextEditLog))
 	settings.Settings(uiMainWindow)
 
 	return window

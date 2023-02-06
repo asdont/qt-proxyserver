@@ -15,10 +15,9 @@ type UIWindow struct {
 	GroupBoxServer         *widgets.QGroupBox
 	LineEditProxyAddress   *widgets.QLineEdit
 	PushButtonServerStart  *widgets.QPushButton
-	LineEditserverLogin    *widgets.QLineEdit
+	LineEditServerLogin    *widgets.QLineEdit
 	LineEditServerPassword *widgets.QLineEdit
 	LineEditServerPort     *widgets.QLineEdit
-	PushButtonServerStop   *widgets.QPushButton
 	Tab                    *widgets.QWidget
 	GroupBox               *widgets.QGroupBox
 	PushButtonWhy          *widgets.QPushButton
@@ -48,27 +47,23 @@ func (this *UIWindow) SetupUI(Window *widgets.QMainWindow) {
 	this.GroupBoxServer.SetGeometry(core.NewQRect4(13, 10, 550, 101))
 	this.LineEditProxyAddress = widgets.NewQLineEdit(this.GroupBoxServer)
 	this.LineEditProxyAddress.SetObjectName("LineEditProxyAddress")
-	this.LineEditProxyAddress.SetGeometry(core.NewQRect4(20, 23, 400, 28))
+	this.LineEditProxyAddress.SetGeometry(core.NewQRect4(20, 26, 400, 28))
 	this.LineEditProxyAddress.SetInputMethodHints(core.Qt__ImhNone)
 	this.PushButtonServerStart = widgets.NewQPushButton(this.GroupBoxServer)
 	this.PushButtonServerStart.SetObjectName("PushButtonServerStart")
 	this.PushButtonServerStart.SetEnabled(true)
-	this.PushButtonServerStart.SetGeometry(core.NewQRect4(440, 23, 100, 28))
-	this.LineEditserverLogin = widgets.NewQLineEdit(this.GroupBoxServer)
-	this.LineEditserverLogin.SetObjectName("LineEditserverLogin")
-	this.LineEditserverLogin.SetGeometry(core.NewQRect4(20, 60, 170, 28))
+	this.PushButtonServerStart.SetGeometry(core.NewQRect4(440, 26, 100, 28))
+	this.LineEditServerLogin = widgets.NewQLineEdit(this.GroupBoxServer)
+	this.LineEditServerLogin.SetObjectName("LineEditServerLogin")
+	this.LineEditServerLogin.SetGeometry(core.NewQRect4(20, 63, 170, 28))
 	this.LineEditServerPassword = widgets.NewQLineEdit(this.GroupBoxServer)
 	this.LineEditServerPassword.SetObjectName("LineEditServerPassword")
-	this.LineEditServerPassword.SetGeometry(core.NewQRect4(195, 60, 170, 28))
+	this.LineEditServerPassword.SetGeometry(core.NewQRect4(195, 63, 170, 28))
 	this.LineEditServerPassword.SetEchoMode(widgets.QLineEdit__Password)
 	this.LineEditServerPort = widgets.NewQLineEdit(this.GroupBoxServer)
 	this.LineEditServerPort.SetObjectName("LineEditServerPort")
-	this.LineEditServerPort.SetGeometry(core.NewQRect4(370, 60, 50, 28))
+	this.LineEditServerPort.SetGeometry(core.NewQRect4(370, 63, 50, 28))
 	this.LineEditServerPort.SetMaxLength(5)
-	this.PushButtonServerStop = widgets.NewQPushButton(this.GroupBoxServer)
-	this.PushButtonServerStop.SetObjectName("PushButtonServerStop")
-	this.PushButtonServerStop.SetEnabled(false)
-	this.PushButtonServerStop.SetGeometry(core.NewQRect4(440, 60, 100, 28))
 	this.TabWidgetServer.AddTab(this.TabServer, "")
 	this.Tab = widgets.NewQWidget(this.TabWidgetServer, core.Qt__Widget)
 	this.Tab.SetObjectName("Tab")
@@ -90,22 +85,21 @@ func (this *UIWindow) SetupUI(Window *widgets.QMainWindow) {
 
 func (this *UIWindow) RetranslateUi(Window *widgets.QMainWindow) {
 	_translate := core.QCoreApplication_Translate
-	Window.SetWindowTitle(_translate("Window", "Прокси SOCKS5", "", -1))
+	Window.SetWindowTitle(_translate("Window", "Сервер через SOCKS5", "", -1))
 	this.GroupBoxLog.SetTitle(_translate("Window", "Информация", "", -1))
 	this.TextEditLog.SetWhatsThis(_translate("Window", "Инормация. Сюда пишутся ошибки и логи.", "", -1))
-	this.GroupBoxServer.SetTitle(_translate("Window", "Запуск прокси SOCKS5", "", -1))
+	this.GroupBoxServer.SetTitle(_translate("Window", "Запуск сервера через прокси SOCKS5", "", -1))
 	this.LineEditProxyAddress.SetWhatsThis(_translate("Window", "Серверные запросы через этот прокси", "", -1))
 	this.LineEditProxyAddress.SetPlaceholderText(_translate("Window", "socks5://login:password@1.2.3.4:9090", "", -1))
 	this.PushButtonServerStart.SetText(_translate("Window", "Запустить", "", -1))
-	this.LineEditserverLogin.SetWhatsThis(_translate("Window", "Логин для сервера", "", -1))
-	this.LineEditserverLogin.SetText(_translate("Window", "test", "", -1))
-	this.LineEditserverLogin.SetPlaceholderText(_translate("Window", "Логин", "", -1))
+	this.LineEditServerLogin.SetWhatsThis(_translate("Window", "Логин для сервера", "", -1))
+	this.LineEditServerLogin.SetText(_translate("Window", "test", "", -1))
+	this.LineEditServerLogin.SetPlaceholderText(_translate("Window", "Логин", "", -1))
 	this.LineEditServerPassword.SetWhatsThis(_translate("Window", "Пароль для сервера", "", -1))
 	this.LineEditServerPassword.SetText(_translate("Window", "test", "", -1))
 	this.LineEditServerPassword.SetPlaceholderText(_translate("Window", "Пароль", "", -1))
 	this.LineEditServerPort.SetWhatsThis(_translate("Window", "Порт для сервера", "", -1))
 	this.LineEditServerPort.SetPlaceholderText(_translate("Window", "Порт", "", -1))
-	this.PushButtonServerStop.SetText(_translate("Window", "Остановить", "", -1))
 	this.TabWidgetServer.SetTabText(this.TabWidgetServer.IndexOf(this.TabServer), _translate("Window", "Сервер", "", -1))
 	this.GroupBox.SetTitle(_translate("Window", "Здесь нет настроек", "", -1))
 	this.PushButtonWhy.SetText(_translate("Window", "Почему?", "", -1))

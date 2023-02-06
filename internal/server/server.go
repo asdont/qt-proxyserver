@@ -7,28 +7,39 @@ import (
 	"log"
 	"net"
 	"net/url"
-	"regexp"
 	"strings"
 
 	"github.com/therecipe/qt/widgets"
+	"github.com/things-go/go-socks5"
 	"golang.org/x/net/proxy"
 
 	"qt-proxyserver/internal/logger"
-	"qt-proxyserver/internal/socks5"
 	"qt-proxyserver/uigen"
 )
 
-const regexpSOCKS5 = `^socks5://(.+:.+@|)(\d{1,3}[.]){3}\d{1,3}:\d{1,5}$`
+var errStopServer = errors.New("stop server")
 
-var (
-	errStopServer        = errors.New("stop server")
-	errWrongProxyAddress = errors.New("wrong proxy address")
-)
+func Server(w *uigen.UIWindow, regexps RegularExpressions, tEditLogger *logger.TEditLogger) {
+	startServer(
+		w.PushButtonServerStart,
+		w.LineEditProxyAddress,
+		w.LineEditServerLogin,
+		w.LineEditServerPassword,
+		w.LineEditServerPort,
+		regexps,
+		tEditLogger,
+	)
+}
 
-func Server(w *uigen.UIWindow) {
-	tEditLogger := logger.NewTEditLogger(w.TextEditLog)
-
-	done := make(chan struct{}, 1)
+func startServer(
+	pushButtonStartServer *widgets.QPushButton,
+	lineEditProxyAddress *widgets.QLineEdit,
+	lineEditServerLogin *widgets.QLineEdit,
+	lineEditServerPassword *widgets.QLineEdit,
+	lineEditServerPort *widgets.QLineEdit,
+	regexps RegularExpressions,
+	tEditLogger *logger.TEditLogger,
+) {
 	chErr := make(chan error, 1)
 
 	go func() {
@@ -39,58 +50,27 @@ func Server(w *uigen.UIWindow) {
 		}
 	}()
 
-	startServer(
-		w.PushButtonServerStart,
-		w.PushButtonServerStop,
-		w.LineEditProxyAddress,
-		w.LineEditserverLogin,
-		w.LineEditServerPassword,
-		w.LineEditServerPort,
-		done,
-		chErr,
-		tEditLogger,
-	)
-
-	stopServer(
-		w.PushButtonServerStart,
-		w.PushButtonServerStop,
-		strings.TrimSpace(w.LineEditServerPort.Text()),
-		done,
-		tEditLogger,
-	)
-}
-
-func startServer(
-	pushButtonStartServer *widgets.QPushButton,
-	pushButtonStopServer *widgets.QPushButton,
-	lineEditProxyAddress *widgets.QLineEdit,
-	lineEditServerLogin *widgets.QLineEdit,
-	lineEditServerPassword *widgets.QLineEdit,
-	lineEditServerPort *widgets.QLineEdit,
-	done chan struct{},
-	chErr chan error,
-	tEditLogger *logger.TEditLogger,
-) {
 	pushButtonStartServer.ConnectClicked(func(bool) {
 		proxyAddress := strings.TrimSpace(lineEditProxyAddress.Text())
+		serverLogin := strings.TrimSpace(lineEditServerLogin.Text())
+		serverPassword := strings.TrimSpace(lineEditServerPassword.Text())
+		serverPort := strings.TrimSpace(lineEditServerPort.Text())
 
-		if err := checkProxyAddress(proxyAddress); err != nil {
-			tEditLogger.InsertText(logger.Error, "check proxy address", err.Error())
+		if err := checkValues(regexps, proxyAddress, serverLogin, serverPassword, serverPort); err != nil {
+			tEditLogger.InsertText(logger.Error, "check values", err.Error())
 
 			return
 		}
 
 		pushButtonStartServer.SetEnabled(false)
-		pushButtonStopServer.SetEnabled(true)
 
 		tEditLogger.InsertText(logger.Info, "start server", lineEditServerPort.Text())
 
 		if err := startSocks5(
 			proxyAddress,
-			strings.TrimSpace(lineEditServerLogin.Text()),
-			strings.TrimSpace(lineEditServerPassword.Text()),
-			strings.TrimSpace(lineEditServerPort.Text()),
-			done,
+			serverLogin,
+			serverPassword,
+			serverPort,
 			chErr,
 			tEditLogger,
 		); err != nil {
@@ -99,20 +79,11 @@ func startServer(
 	})
 }
 
-func checkProxyAddress(proxyAddress string) error {
-	if !regexp.MustCompile(regexpSOCKS5).MatchString(proxyAddress) {
-		return fmt.Errorf("%s: %v", proxyAddress, errWrongProxyAddress)
-	}
-
-	return nil
-}
-
 func startSocks5(
 	proxyAddress string,
 	serverLogin string,
 	serverPassword string,
 	serverPort string,
-	done chan struct{},
 	chErr chan error,
 	tEditLogger *logger.TEditLogger,
 ) error {
@@ -124,7 +95,7 @@ func startSocks5(
 		Credentials: credentials,
 	}
 
-	dialer, err := createDial(proxyAddress)
+	dialer, err := createDialer(proxyAddress)
 	if err != nil {
 		return fmt.Errorf("create dial: %w", err)
 	}
@@ -140,8 +111,8 @@ func startSocks5(
 	)
 
 	go func() {
-		if err := srv.ListenAndServe("tcp", ":"+serverPort, done); err != nil {
-			chErr <- err
+		if err := srv.ListenAndServe("tcp", ":"+serverPort); err != nil {
+			chErr <- fmt.Errorf("listen and serve: %w", err)
 
 			return
 		}
@@ -152,7 +123,7 @@ func startSocks5(
 	return nil
 }
 
-func createDial(proxyAddress string) (proxy.Dialer, error) {
+func createDialer(proxyAddress string) (proxy.Dialer, error) {
 	u, err := url.Parse(proxyAddress)
 	if err != nil {
 		return nil, fmt.Errorf("url: parse: %w", err)
@@ -172,51 +143,4 @@ func createDial(proxyAddress string) (proxy.Dialer, error) {
 	}
 
 	return dialer, nil
-}
-
-func stopServer(
-	pushButtonStartServer *widgets.QPushButton,
-	pushButtonStopServer *widgets.QPushButton,
-	serverPort string,
-	done chan struct{},
-	tEditLogger *logger.TEditLogger,
-) {
-	pushButtonStopServer.ConnectClicked(func(bool) {
-		if len(done) == 0 {
-			done <- struct{}{}
-		}
-
-		pushButtonStartServer.SetEnabled(true)
-		pushButtonStopServer.SetEnabled(false)
-
-		if err := stopServerSelfRequest(serverPort, tEditLogger); err != nil {
-			var opErr *net.OpError
-			if errors.As(err, &opErr) {
-				tEditLogger.InsertText(logger.Info, "stop server", "ok")
-
-				return
-			}
-
-			tEditLogger.InsertText(logger.Fatal, "stop server: self request", err.Error())
-		}
-	})
-}
-
-func stopServerSelfRequest(serverPort string, tEditLogger *logger.TEditLogger) error {
-	conn, err := net.Dial("tcp", "127.0.0.1:"+serverPort)
-	if err != nil {
-		return fmt.Errorf("net dial: %w", err)
-	}
-
-	defer func() {
-		if err := conn.Close(); err != nil {
-			tEditLogger.InsertText(logger.Error, "conn close", err.Error())
-		}
-	}()
-
-	if _, err := conn.Write(nil); err != nil {
-		return fmt.Errorf("coon: write: %w", err)
-	}
-
-	return nil
 }
