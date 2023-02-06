@@ -18,6 +18,7 @@ type UIWindow struct {
 	LineEditServerLogin    *widgets.QLineEdit
 	LineEditServerPassword *widgets.QLineEdit
 	LineEditServerPort     *widgets.QLineEdit
+	PushButtonSave         *widgets.QPushButton
 	Tab                    *widgets.QWidget
 	GroupBox               *widgets.QGroupBox
 	PushButtonWhy          *widgets.QPushButton
@@ -64,6 +65,10 @@ func (this *UIWindow) SetupUI(Window *widgets.QMainWindow) {
 	this.LineEditServerPort.SetObjectName("LineEditServerPort")
 	this.LineEditServerPort.SetGeometry(core.NewQRect4(370, 63, 50, 28))
 	this.LineEditServerPort.SetMaxLength(5)
+	this.PushButtonSave = widgets.NewQPushButton(this.GroupBoxServer)
+	this.PushButtonSave.SetObjectName("PushButtonSave")
+	this.PushButtonSave.SetEnabled(true)
+	this.PushButtonSave.SetGeometry(core.NewQRect4(440, 63, 100, 28))
 	this.TabWidgetServer.AddTab(this.TabServer, "")
 	this.Tab = widgets.NewQWidget(this.TabWidgetServer, core.Qt__Widget)
 	this.Tab.SetObjectName("Tab")
@@ -93,13 +98,14 @@ func (this *UIWindow) RetranslateUi(Window *widgets.QMainWindow) {
 	this.LineEditProxyAddress.SetPlaceholderText(_translate("Window", "socks5://login:password@1.2.3.4:9090", "", -1))
 	this.PushButtonServerStart.SetText(_translate("Window", "Запустить", "", -1))
 	this.LineEditServerLogin.SetWhatsThis(_translate("Window", "Логин для сервера", "", -1))
-	this.LineEditServerLogin.SetText(_translate("Window", "test", "", -1))
+	this.LineEditServerLogin.SetText(_translate("Window", "", "", -1))
 	this.LineEditServerLogin.SetPlaceholderText(_translate("Window", "Логин", "", -1))
 	this.LineEditServerPassword.SetWhatsThis(_translate("Window", "Пароль для сервера", "", -1))
-	this.LineEditServerPassword.SetText(_translate("Window", "test", "", -1))
+	this.LineEditServerPassword.SetText(_translate("Window", "", "", -1))
 	this.LineEditServerPassword.SetPlaceholderText(_translate("Window", "Пароль", "", -1))
 	this.LineEditServerPort.SetWhatsThis(_translate("Window", "Порт для сервера", "", -1))
 	this.LineEditServerPort.SetPlaceholderText(_translate("Window", "Порт", "", -1))
+	this.PushButtonSave.SetText(_translate("Window", "Сохранить", "", -1))
 	this.TabWidgetServer.SetTabText(this.TabWidgetServer.IndexOf(this.TabServer), _translate("Window", "Сервер", "", -1))
 	this.GroupBox.SetTitle(_translate("Window", "Здесь нет настроек", "", -1))
 	this.PushButtonWhy.SetText(_translate("Window", "Почему?", "", -1))

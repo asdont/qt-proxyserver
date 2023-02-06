@@ -33,15 +33,18 @@ func NewServerWidget(parent widgets.QWidget_ITF) *Window {
 	}
 
 	uiMainWindow := new(uigen.UIWindow)
+
 	uiMainWindow.SetupUI(window.Widget)
 
-	uicustom.SetupWindowCustom(window.Widget)
-	uicustom.SetupUICustom(uiMainWindow)
+	textEditLogger := logger.NewTEditLogger(uiMainWindow.TextEditLog)
 
+	uicustom.SetupWindowCustom(window.Widget)
 	uicustom.FieldsMaskValidator(uiMainWindow)
 
-	server.Server(uiMainWindow, server.CompileRegexps(), logger.NewTEditLogger(uiMainWindow.TextEditLog))
+	server.Server(uiMainWindow, server.CompileRegexps(), textEditLogger)
+
 	settings.Settings(uiMainWindow)
+	settings.Fields(uiMainWindow, textEditLogger)
 
 	return window
 }

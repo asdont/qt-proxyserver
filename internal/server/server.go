@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/therecipe/qt/widgets"
 	"github.com/things-go/go-socks5"
 	"golang.org/x/net/proxy"
 
@@ -20,26 +19,10 @@ import (
 var errStopServer = errors.New("stop server")
 
 func Server(w *uigen.UIWindow, regexps RegularExpressions, tEditLogger *logger.TEditLogger) {
-	startServer(
-		w.PushButtonServerStart,
-		w.LineEditProxyAddress,
-		w.LineEditServerLogin,
-		w.LineEditServerPassword,
-		w.LineEditServerPort,
-		regexps,
-		tEditLogger,
-	)
+	startServer(w, regexps, tEditLogger)
 }
 
-func startServer(
-	pushButtonStartServer *widgets.QPushButton,
-	lineEditProxyAddress *widgets.QLineEdit,
-	lineEditServerLogin *widgets.QLineEdit,
-	lineEditServerPassword *widgets.QLineEdit,
-	lineEditServerPort *widgets.QLineEdit,
-	regexps RegularExpressions,
-	tEditLogger *logger.TEditLogger,
-) {
+func startServer(w *uigen.UIWindow, regexps RegularExpressions, tEditLogger *logger.TEditLogger) {
 	chErr := make(chan error, 1)
 
 	go func() {
@@ -50,11 +33,11 @@ func startServer(
 		}
 	}()
 
-	pushButtonStartServer.ConnectClicked(func(bool) {
-		proxyAddress := strings.TrimSpace(lineEditProxyAddress.Text())
-		serverLogin := strings.TrimSpace(lineEditServerLogin.Text())
-		serverPassword := strings.TrimSpace(lineEditServerPassword.Text())
-		serverPort := strings.TrimSpace(lineEditServerPort.Text())
+	w.PushButtonServerStart.ConnectClicked(func(bool) {
+		proxyAddress := strings.TrimSpace(w.LineEditProxyAddress.Text())
+		serverLogin := strings.TrimSpace(w.LineEditServerLogin.Text())
+		serverPassword := strings.TrimSpace(w.LineEditServerPassword.Text())
+		serverPort := strings.TrimSpace(w.LineEditServerPort.Text())
 
 		if err := checkValues(regexps, proxyAddress, serverLogin, serverPassword, serverPort); err != nil {
 			tEditLogger.InsertText(logger.Error, "check values", err.Error())
@@ -62,9 +45,9 @@ func startServer(
 			return
 		}
 
-		pushButtonStartServer.SetEnabled(false)
+		w.PushButtonServerStart.SetEnabled(false)
 
-		tEditLogger.InsertText(logger.Info, "start server", lineEditServerPort.Text())
+		tEditLogger.InsertText(logger.Info, "start server", serverPort)
 
 		if err := startSocks5(
 			proxyAddress,
