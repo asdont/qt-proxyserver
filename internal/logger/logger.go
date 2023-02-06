@@ -11,8 +11,8 @@ type Level string
 
 const (
 	Fatal Level = "FATAL"
-	Error       = "ERROR"
-	Info        = "INFO"
+	Error Level = "ERROR"
+	Info  Level = "INFO"
 )
 
 const bufChanTEditLogger = 100
@@ -36,7 +36,7 @@ func NewTEditLogger(w *widgets.QTextEdit) *TEditLogger {
 	return tEditLogger
 }
 
-func (tEL *TEditLogger) Write(p []byte) (n int, err error) {
+func (tEL *TEditLogger) Write(p []byte) (int, error) {
 	tEL.msg <- string(p)
 
 	return len(p), nil

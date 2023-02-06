@@ -26,19 +26,19 @@ func CompileRegexps() RegularExpressions {
 
 func checkValues(regexps RegularExpressions, proxyAddress, serverLogin, serverPassword, serverPort string) error {
 	if !regexps.ProxySocks5.MatchString(proxyAddress) {
-		return fmt.Errorf("proxy address: %s: %v", proxyAddress, errWrongValue)
+		return fmt.Errorf("proxy address: %s: %w", proxyAddress, errWrongValue)
 	}
 
 	if !regexps.ServerLogin.MatchString(serverLogin) {
-		return fmt.Errorf("server login: %s: %v", serverLogin, errWrongValue)
+		return fmt.Errorf("server login: %s: %w", serverLogin, errWrongValue)
 	}
 
 	if !regexps.ServerPassword.MatchString(serverPassword) {
-		return fmt.Errorf("server password: %s: %v", serverPassword, errWrongValue)
+		return fmt.Errorf("server password: %s: %w", serverPassword, errWrongValue)
 	}
 
 	if !regexps.ServerPort.MatchString(serverPort) {
-		return fmt.Errorf("server port: %s: %v", serverPort, errWrongValue)
+		return fmt.Errorf("server port: %s: %w", serverPort, errWrongValue)
 	}
 
 	return nil
