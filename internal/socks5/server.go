@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net"
 
@@ -64,7 +63,7 @@ func NewServer(opts ...Option) *Server {
 		bufferPool:  bufferpool.NewPool(32 * 1024),
 		resolver:    DNSResolver{},
 		rules:       NewPermitAll(),
-		logger:      NewLogger(log.New(ioutil.Discard, "socks5: ", log.LstdFlags)),
+		logger:      NewLogger(log.New(io.Discard, "socks5: ", log.LstdFlags)),
 		dial: func(ctx context.Context, net_, addr string) (net.Conn, error) {
 			return net.Dial(net_, addr)
 		},
@@ -86,32 +85,38 @@ func NewServer(opts ...Option) *Server {
 }
 
 // ListenAndServe is used to create a listener and serve on it
-func (sf *Server) ListenAndServe(network, addr string, chStop chan struct{}) error {
+func (sf *Server) ListenAndServe(network, addr string, done chan struct{}) error {
 	l, err := net.Listen(network, addr)
 	if err != nil {
 		return err
 	}
 
-	return sf.Serve(l, chStop)
+	return sf.Serve(l, done)
 }
 
 // Serve is used to serve connections from a listener
-func (sf *Server) Serve(l net.Listener, chStop chan struct{}) error {
-	chErr := make(chan error, 1)
-
-	defer func(l net.Listener) {
+func (sf *Server) Serve(l net.Listener, done chan struct{}) error {
+	defer func() {
 		if err := l.Close(); err != nil {
-			chErr <- err
+			log.Println(err)
 		}
-	}(l)
+	}()
 
-	go func() {
-		for {
-			conn, err := l.Accept()
-			if err != nil {
-				chErr <- err
+	for {
+		conn, err := l.Accept()
+		if err != nil {
+			return err
+		}
+
+		select {
+		case <-done:
+			if err := l.Close(); err != nil {
+				return err
 			}
 
+			return nil
+
+		default:
 			sf.goFunc(func() {
 				if conn != nil {
 					if err := sf.ServeConn(conn); err != nil {
@@ -120,20 +125,6 @@ func (sf *Server) Serve(l net.Listener, chStop chan struct{}) error {
 				}
 			})
 		}
-	}()
-
-	select {
-	case <-chStop:
-		fmt.Println("done")
-
-		if err := l.Close(); err != nil {
-			return err
-		}
-
-		return nil
-
-	case err := <-chErr:
-		return err
 	}
 }
 
@@ -143,7 +134,9 @@ func (sf *Server) ServeConn(conn net.Conn) error {
 
 	defer func() {
 		if conn != nil {
-			conn.Close()
+			if err := conn.Close(); err != nil {
+				log.Println(err)
+			}
 		}
 	}()
 
@@ -186,6 +179,7 @@ func (sf *Server) ServeConn(conn net.Conn) error {
 	request.AuthContext = authContext
 	request.LocalAddr = conn.LocalAddr()
 	request.RemoteAddr = conn.RemoteAddr()
+
 	// Process the client request
 	return sf.handleRequest(conn, request)
 }
@@ -193,6 +187,7 @@ func (sf *Server) ServeConn(conn net.Conn) error {
 // authenticate is used to handle connection authentication
 func (sf *Server) authenticate(conn io.Writer, bufConn io.Reader,
 	userAddr string, methods []byte) (*AuthContext, error) {
+
 	// Select a usable method
 	for _, auth := range sf.authMethods {
 		for _, method := range methods {
@@ -201,8 +196,12 @@ func (sf *Server) authenticate(conn io.Writer, bufConn io.Reader,
 			}
 		}
 	}
+
 	// No usable method found
-	conn.Write([]byte{statute.VersionSocks5, statute.MethodNoAcceptable}) // nolint: errcheck
+	if _, err := conn.Write([]byte{statute.VersionSocks5, statute.MethodNoAcceptable}); err != nil {
+		return nil, err
+	} // nolint: errcheck
+
 	return nil, statute.ErrNoSupportedAuth
 }
 

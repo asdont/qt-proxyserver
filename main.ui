@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Прокси SOCKS5</string>
+   <string>Сервер через SOCKS5</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTabWidget" name="tabWidgetServer">
@@ -54,6 +54,9 @@
          <height>250</height>
         </rect>
        </property>
+       <property name="whatsThis">
+        <string>Инормация. Сюда пишутся ошибки и логи.</string>
+       </property>
        <property name="verticalScrollBarPolicy">
         <enum>Qt::ScrollBarAlwaysOn</enum>
        </property>
@@ -69,13 +72,13 @@
        </rect>
       </property>
       <property name="title">
-       <string>Запуск прокси SOCKS5</string>
+       <string>Запуск сервера через прокси SOCKS5</string>
       </property>
       <widget class="QLineEdit" name="lineEditProxyAddress">
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>23</y>
+         <y>26</y>
          <width>400</width>
          <height>28</height>
         </rect>
@@ -91,29 +94,35 @@
        </property>
       </widget>
       <widget class="QPushButton" name="pushButtonServerStart">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>440</x>
-         <y>23</y>
+         <y>26</y>
          <width>100</width>
          <height>28</height>
         </rect>
        </property>
        <property name="text">
-        <string>Запуск</string>
+        <string>Запустить</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="lineEditserverLogin">
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>60</y>
+         <y>63</y>
          <width>170</width>
          <height>28</height>
         </rect>
        </property>
        <property name="whatsThis">
         <string>Логин для сервера</string>
+       </property>
+       <property name="text">
+        <string>test</string>
        </property>
        <property name="placeholderText">
         <string>Логин</string>
@@ -123,13 +132,19 @@
        <property name="geometry">
         <rect>
          <x>195</x>
-         <y>60</y>
+         <y>63</y>
          <width>170</width>
          <height>28</height>
         </rect>
        </property>
        <property name="whatsThis">
         <string>Пароль для сервера</string>
+       </property>
+       <property name="text">
+        <string>test</string>
+       </property>
+       <property name="echoMode">
+        <enum>QLineEdit::Password</enum>
        </property>
        <property name="placeholderText">
         <string>Пароль</string>
@@ -139,7 +154,7 @@
        <property name="geometry">
         <rect>
          <x>370</x>
-         <y>60</y>
+         <y>63</y>
          <width>50</width>
          <height>28</height>
         </rect>
@@ -155,16 +170,19 @@
        </property>
       </widget>
       <widget class="QPushButton" name="pushButtonServerStop">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>440</x>
-         <y>60</y>
+         <y>63</y>
          <width>100</width>
          <height>28</height>
         </rect>
        </property>
        <property name="text">
-        <string>Останвить</string>
+        <string>Остановить</string>
        </property>
       </widget>
      </widget>

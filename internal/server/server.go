@@ -7,7 +7,6 @@ import (
 	"log"
 	"net"
 	"net/url"
-	"os"
 	"regexp"
 	"strings"
 
@@ -27,7 +26,18 @@ var (
 )
 
 func Server(w *uigen.UIWindow) {
-	chStop := make(chan struct{}, 0)
+	tEditLogger := logger.NewTEditLogger(w.TextEditLog)
+
+	done := make(chan struct{}, 1)
+	chErr := make(chan error, 1)
+
+	go func() {
+		for {
+			err := <-chErr
+
+			tEditLogger.InsertText(logger.Fatal, "global error", err.Error())
+		}
+	}()
 
 	startServer(
 		w.PushButtonServerStart,
@@ -36,14 +46,17 @@ func Server(w *uigen.UIWindow) {
 		w.LineEditserverLogin,
 		w.LineEditServerPassword,
 		w.LineEditServerPort,
-		w.TextEditLog,
-		chStop,
+		done,
+		chErr,
+		tEditLogger,
 	)
 
 	stopServer(
 		w.PushButtonServerStart,
 		w.PushButtonServerStop,
-		chStop,
+		strings.TrimSpace(w.LineEditServerPort.Text()),
+		done,
+		tEditLogger,
 	)
 }
 
@@ -54,31 +67,34 @@ func startServer(
 	lineEditServerLogin *widgets.QLineEdit,
 	lineEditServerPassword *widgets.QLineEdit,
 	lineEditServerPort *widgets.QLineEdit,
-	textEditLog *widgets.QTextEdit,
-	chStop chan struct{},
+	done chan struct{},
+	chErr chan error,
+	tEditLogger *logger.TEditLogger,
 ) {
 	pushButtonStartServer.ConnectClicked(func(bool) {
 		proxyAddress := strings.TrimSpace(lineEditProxyAddress.Text())
 
 		if err := checkProxyAddress(proxyAddress); err != nil {
-			textEditLog.InsertPlainText(logger.Logger(logger.Error, err.Error()))
+			tEditLogger.InsertText(logger.Error, "check proxy address", err.Error())
 
 			return
 		}
 
-		textEditLog.InsertPlainText(logger.Logger(logger.Info, "start server"))
-
 		pushButtonStartServer.SetEnabled(false)
 		pushButtonStopServer.SetEnabled(true)
+
+		tEditLogger.InsertText(logger.Info, "start server", lineEditServerPort.Text())
 
 		if err := startSocks5(
 			proxyAddress,
 			strings.TrimSpace(lineEditServerLogin.Text()),
 			strings.TrimSpace(lineEditServerPassword.Text()),
 			strings.TrimSpace(lineEditServerPort.Text()),
-			chStop,
+			done,
+			chErr,
+			tEditLogger,
 		); err != nil {
-			textEditLog.InsertPlainText(logger.Logger(logger.Fatal, err.Error()))
+			tEditLogger.InsertText(logger.Fatal, "start socks5", err.Error())
 		}
 	})
 }
@@ -96,7 +112,9 @@ func startSocks5(
 	serverLogin string,
 	serverPassword string,
 	serverPort string,
-	chStop chan struct{},
+	done chan struct{},
+	chErr chan error,
+	tEditLogger *logger.TEditLogger,
 ) error {
 	credentials := socks5.StaticCredentials{
 		serverLogin: serverPassword,
@@ -116,15 +134,13 @@ func startSocks5(
 	}
 
 	srv := socks5.NewServer(
-		socks5.WithLogger(socks5.NewLogger(log.New(os.Stdout, "socks5: ", log.LstdFlags))),
+		socks5.WithLogger(socks5.NewLogger(log.New(tEditLogger, "", log.LstdFlags))),
 		socks5.WithAuthMethods([]socks5.Authenticator{auth}),
 		socks5.WithDial(dialContext),
 	)
 
-	chErr := make(chan error, 1)
-
 	go func() {
-		if err := srv.ListenAndServe("tcp", ":"+serverPort, chStop); err != nil {
+		if err := srv.ListenAndServe("tcp", ":"+serverPort, done); err != nil {
 			chErr <- err
 
 			return
@@ -133,7 +149,7 @@ func startSocks5(
 		chErr <- errStopServer
 	}()
 
-	return <-chErr
+	return nil
 }
 
 func createDial(proxyAddress string) (proxy.Dialer, error) {
@@ -142,11 +158,12 @@ func createDial(proxyAddress string) (proxy.Dialer, error) {
 		return nil, fmt.Errorf("url: parse: %w", err)
 	}
 
-	password, _ := u.User.Password()
+	auth := new(proxy.Auth)
 
-	auth := &proxy.Auth{
-		User:     u.User.Username(),
-		Password: password,
+	password, ok := u.User.Password()
+	if ok {
+		auth.User = u.User.Username()
+		auth.Password = password
 	}
 
 	dialer, err := proxy.SOCKS5("tcp", u.Host, auth, proxy.Direct)
@@ -160,12 +177,46 @@ func createDial(proxyAddress string) (proxy.Dialer, error) {
 func stopServer(
 	pushButtonStartServer *widgets.QPushButton,
 	pushButtonStopServer *widgets.QPushButton,
-	chStop chan struct{},
+	serverPort string,
+	done chan struct{},
+	tEditLogger *logger.TEditLogger,
 ) {
 	pushButtonStopServer.ConnectClicked(func(bool) {
+		if len(done) == 0 {
+			done <- struct{}{}
+		}
+
 		pushButtonStartServer.SetEnabled(true)
 		pushButtonStopServer.SetEnabled(false)
 
-		chStop <- struct{}{}
+		if err := stopServerSelfRequest(serverPort, tEditLogger); err != nil {
+			var opErr *net.OpError
+			if errors.As(err, &opErr) {
+				tEditLogger.InsertText(logger.Info, "stop server", "ok")
+
+				return
+			}
+
+			tEditLogger.InsertText(logger.Fatal, "stop server: self request", err.Error())
+		}
 	})
+}
+
+func stopServerSelfRequest(serverPort string, tEditLogger *logger.TEditLogger) error {
+	conn, err := net.Dial("tcp", "127.0.0.1:"+serverPort)
+	if err != nil {
+		return fmt.Errorf("net dial: %w", err)
+	}
+
+	defer func() {
+		if err := conn.Close(); err != nil {
+			tEditLogger.InsertText(logger.Error, "conn close", err.Error())
+		}
+	}()
+
+	if _, err := conn.Write(nil); err != nil {
+		return fmt.Errorf("coon: write: %w", err)
+	}
+
+	return nil
 }
