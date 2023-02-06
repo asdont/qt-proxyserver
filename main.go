@@ -35,6 +35,7 @@ func NewServerWidget(parent widgets.QWidget_ITF) *Window {
 	uiMainWindow.SetupUI(window.Widget)
 
 	uicustom.SetupWindowCustom(window.Widget)
+	uicustom.SetupUICustom(uiMainWindow)
 
 	server.Server(uiMainWindow)
 	settings.Settings(uiMainWindow)

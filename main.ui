@@ -37,39 +37,26 @@
       <property name="geometry">
        <rect>
         <x>13</x>
-        <y>90</y>
+        <y>119</y>
         <width>550</width>
-        <height>320</height>
+        <height>291</height>
        </rect>
       </property>
       <property name="title">
        <string>Информация</string>
       </property>
-      <widget class="QScrollArea" name="scrollAreaLog">
+      <widget class="QTextEdit" name="textEditLog">
        <property name="geometry">
         <rect>
-         <x>6</x>
+         <x>10</x>
          <y>30</y>
-         <width>540</width>
-         <height>280</height>
+         <width>530</width>
+         <height>250</height>
         </rect>
        </property>
-       <property name="cursor" stdset="0">
-        <cursorShape>IBeamCursor</cursorShape>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOn</enum>
        </property>
-       <property name="widgetResizable">
-        <bool>true</bool>
-       </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>538</width>
-          <height>278</height>
-         </rect>
-        </property>
-       </widget>
       </widget>
      </widget>
      <widget class="QGroupBox" name="groupBoxServer">
@@ -78,7 +65,7 @@
         <x>13</x>
         <y>10</y>
         <width>550</width>
-        <height>70</height>
+        <height>101</height>
        </rect>
       </property>
       <property name="title">
@@ -88,10 +75,13 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>30</y>
+         <y>23</y>
          <width>400</width>
          <height>28</height>
         </rect>
+       </property>
+       <property name="whatsThis">
+        <string>Серверные запросы через этот прокси</string>
        </property>
        <property name="inputMethodHints">
         <set>Qt::ImhNone</set>
@@ -100,17 +90,81 @@
         <string>socks5://login:password@1.2.3.4:9090</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButtonStartServer">
+      <widget class="QPushButton" name="pushButtonServerStart">
        <property name="geometry">
         <rect>
          <x>440</x>
-         <y>30</y>
+         <y>23</y>
          <width>100</width>
          <height>28</height>
         </rect>
        </property>
        <property name="text">
         <string>Запуск</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEditserverLogin">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>60</y>
+         <width>170</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="whatsThis">
+        <string>Логин для сервера</string>
+       </property>
+       <property name="placeholderText">
+        <string>Логин</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEditServerPassword">
+       <property name="geometry">
+        <rect>
+         <x>195</x>
+         <y>60</y>
+         <width>170</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="whatsThis">
+        <string>Пароль для сервера</string>
+       </property>
+       <property name="placeholderText">
+        <string>Пароль</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEditServerPort">
+       <property name="geometry">
+        <rect>
+         <x>370</x>
+         <y>60</y>
+         <width>50</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="whatsThis">
+        <string>Порт для сервера</string>
+       </property>
+       <property name="maxLength">
+        <number>5</number>
+       </property>
+       <property name="placeholderText">
+        <string>Порт</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButtonServerStop">
+       <property name="geometry">
+        <rect>
+         <x>440</x>
+         <y>60</y>
+         <width>100</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Останвить</string>
        </property>
       </widget>
      </widget>

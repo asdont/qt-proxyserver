@@ -12,4 +12,7 @@ func SetupWindowCustom(widget *widgets.QMainWindow) {
 	widget.SetFixedSize2(585, 475)
 }
 
-func SetupUICustom(ui *uigen.UIWindow) {}
+func SetupUICustom(ui *uigen.UIWindow) {
+	ui.LineEditProxyAddress.SetText("socks5://rxjnwc:12KwMb@196.16.109.63:8000")
+	ui.LineEditServerPort.SetText("4000")
+}
