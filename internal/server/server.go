@@ -87,11 +87,20 @@ func startSocks5(
 		return dialer.Dial(network, address)
 	}
 
-	srv := socks5.NewServer(
-		socks5.WithLogger(socks5.NewLogger(log.New(tEditLogger, "", log.LstdFlags))),
-		socks5.WithAuthMethods([]socks5.Authenticator{auth}),
-		socks5.WithDial(dialContext),
-	)
+	var srv *socks5.Server
+
+	if serverLogin == "" {
+		srv = socks5.NewServer(
+			socks5.WithDial(dialContext),
+			socks5.WithLogger(socks5.NewLogger(log.New(tEditLogger, "", log.LstdFlags))),
+		)
+	} else {
+		srv = socks5.NewServer(
+			socks5.WithDial(dialContext),
+			socks5.WithAuthMethods([]socks5.Authenticator{auth}),
+			socks5.WithLogger(socks5.NewLogger(log.New(tEditLogger, "", log.LstdFlags))),
+		)
+	}
 
 	go func() {
 		if err := srv.ListenAndServe("tcp", ":"+serverPort); err != nil {

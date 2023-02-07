@@ -19,9 +19,6 @@ type UIWindow struct {
 	LineEditServerPassword *widgets.QLineEdit
 	LineEditServerPort     *widgets.QLineEdit
 	PushButtonSave         *widgets.QPushButton
-	Tab                    *widgets.QWidget
-	GroupBox               *widgets.QGroupBox
-	PushButtonWhy          *widgets.QPushButton
 	Statusbar              *widgets.QStatusBar
 }
 
@@ -70,15 +67,6 @@ func (this *UIWindow) SetupUI(Window *widgets.QMainWindow) {
 	this.PushButtonSave.SetEnabled(true)
 	this.PushButtonSave.SetGeometry(core.NewQRect4(440, 63, 100, 28))
 	this.TabWidgetServer.AddTab(this.TabServer, "")
-	this.Tab = widgets.NewQWidget(this.TabWidgetServer, core.Qt__Widget)
-	this.Tab.SetObjectName("Tab")
-	this.GroupBox = widgets.NewQGroupBox(this.Tab)
-	this.GroupBox.SetObjectName("GroupBox")
-	this.GroupBox.SetGeometry(core.NewQRect4(10, 10, 551, 401))
-	this.PushButtonWhy = widgets.NewQPushButton(this.GroupBox)
-	this.PushButtonWhy.SetObjectName("PushButtonWhy")
-	this.PushButtonWhy.SetGeometry(core.NewQRect4(20, 30, 86, 27))
-	this.TabWidgetServer.AddTab(this.Tab, "")
 	Window.SetCentralWidget(this.CentralWidget)
 	this.Statusbar = widgets.NewQStatusBar(Window)
 	this.Statusbar.SetObjectName("Statusbar")
@@ -107,7 +95,4 @@ func (this *UIWindow) RetranslateUi(Window *widgets.QMainWindow) {
 	this.LineEditServerPort.SetPlaceholderText(_translate("Window", "Порт", "", -1))
 	this.PushButtonSave.SetText(_translate("Window", "Сохранить", "", -1))
 	this.TabWidgetServer.SetTabText(this.TabWidgetServer.IndexOf(this.TabServer), _translate("Window", "Сервер", "", -1))
-	this.GroupBox.SetTitle(_translate("Window", "Здесь нет настроек", "", -1))
-	this.PushButtonWhy.SetText(_translate("Window", "Почему?", "", -1))
-	this.TabWidgetServer.SetTabText(this.TabWidgetServer.IndexOf(this.Tab), _translate("Window", "Настройки", "", -1))
 }

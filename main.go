@@ -43,7 +43,6 @@ func NewServerWidget(parent widgets.QWidget_ITF) *Window {
 
 	server.Server(uiMainWindow, server.CompileRegexps(), textEditLogger)
 
-	settings.Settings(uiMainWindow)
 	settings.Fields(uiMainWindow, textEditLogger)
 
 	return window

@@ -18,8 +18,8 @@ type RegularExpressions struct {
 func CompileRegexps() RegularExpressions {
 	return RegularExpressions{
 		ProxySocks5:    regexp.MustCompile(`^socks5://(.+:.+@|)(\d{1,3}[.]){3}\d{1,3}:\d{1,5}$`),
-		ServerLogin:    regexp.MustCompile(`^[^\s]{3,}$`),
-		ServerPassword: regexp.MustCompile(`^[^\s]{3,}$`),
+		ServerLogin:    regexp.MustCompile(`^[^\s]*$`),
+		ServerPassword: regexp.MustCompile(`^[^\s]*$`),
 		ServerPort:     regexp.MustCompile(`^\d{2,5}$`),
 	}
 }

@@ -1,0 +1,66 @@
+linters:
+  enable-all: true
+  disable:
+    - contextcheck
+    - deadcode # deprecated
+    - exhaustivestruct
+    - exhaustruct
+    - gci
+    - gofumpt # goland conflict
+    - golint # archived
+    - gomnd
+    - ifshort # deprecated
+    - interfacer # archived
+    - maligned # archived
+    - noctx
+    - nosnakecase # deprecated
+    - rowserrcheck # is disabled because of generics
+    - scopelint # archived
+    - sqlclosecheck # is disabled because of generics
+    - structcheck # deprecated
+    - tagliatelle # Google conflict(jsonCamel)
+    - varcheck # deprecated
+    - wastedassign # is disabled because of generics
+
+run:
+  skip-files:
+    - "_test\\.go$"
+    - "internal/config/checks.go"
+  skip-dirs:
+    - "uigen"
+
+linters-settings:
+  gomnd:
+    settings:
+      mnd:
+        ignored-functions:
+          - 'os.OpenFile.*'
+          - 'os.WriteFile.*'
+          - 'strconv.*'
+
+  funlen:
+    lines: -1
+    statements: 50
+
+  ireturn:
+    allow:
+      - anon
+      - error
+      - empty
+      - stdlib
+      - "(or|er)$"
+
+  varnamelen:
+    min-name-length: 1
+
+  wrapcheck:
+    ignoreSigs:
+      - .Errorf(
+      - errors.New(
+      - errors.Unwrap(
+      - .Wrap(
+      - .Wrapf(
+      - .WithMessage(
+      - .WithMessagef(
+      - .WithStack(
+      - .Dial(

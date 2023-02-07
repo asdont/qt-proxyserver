@@ -187,37 +187,6 @@
       </widget>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Настройки</string>
-     </attribute>
-     <widget class="QGroupBox" name="groupBox">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>551</width>
-        <height>401</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Здесь нет настроек</string>
-      </property>
-      <widget class="QPushButton" name="pushButtonWhy">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>30</y>
-         <width>86</width>
-         <height>27</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Почему?</string>
-       </property>
-      </widget>
-     </widget>
-    </widget>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
