@@ -1,10 +1,8 @@
 linters:
   enable-all: true
   disable:
-    - contextcheck
     - deadcode # deprecated
-    - exhaustivestruct
-    - exhaustruct
+    - exhaustivestruct # is deprecated
     - gci
     - gofumpt # goland conflict
     - golint # archived
@@ -12,20 +10,18 @@ linters:
     - ifshort # deprecated
     - interfacer # archived
     - maligned # archived
-    - noctx
     - nosnakecase # deprecated
     - rowserrcheck # is disabled because of generics
     - scopelint # archived
     - sqlclosecheck # is disabled because of generics
     - structcheck # deprecated
-    - tagliatelle # Google conflict(jsonCamel)
     - varcheck # deprecated
     - wastedassign # is disabled because of generics
 
 run:
   skip-files:
     - "_test\\.go$"
-    - "internal/config/checks.go"
+
   skip-dirs:
     - "uigen"
 
