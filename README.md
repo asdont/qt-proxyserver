@@ -10,9 +10,9 @@ make build``
 
 ## App settings
 
-![app settings](image/app.png)
+![app settings](docs/app.png)
 
 ## Network settings(OS or browser) 
 
-![app settings](image/network-parameters.png)
+![app settings](docs/network-parameters.png)
 
