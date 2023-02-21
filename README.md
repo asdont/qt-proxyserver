@@ -5,7 +5,7 @@ Proxy change is not implemented. To change, restart the application.
 ## Build
 
 ```sh
-make build``
+make build
 ```
 
 ## App settings

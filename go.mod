@@ -1,6 +1,6 @@
 module qt-proxyserver
 
-go 1.19
+go 1.20
 
 require (
 	github.com/therecipe/qt v0.0.0-20200904063919-c0c124a5770d

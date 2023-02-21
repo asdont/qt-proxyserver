@@ -36,12 +36,12 @@ func loadFields(w *uigen.UIWindow, tEditLogger *logger.TEditLogger) {
 
 	fieldsData, err := os.ReadFile(fileFields)
 	if err != nil {
-		tEditLogger.InsertText(logger.Error, "settings: json marshal", err.Error())
+		tEditLogger.InsertText(logger.Error, "settings: read file", err.Error())
 	}
 
 	var fields Field
 	if err := json.Unmarshal(fieldsData, &fields); err != nil {
-		tEditLogger.InsertText(logger.Error, "settings: json marshal", err.Error())
+		tEditLogger.InsertText(logger.Error, "settings: json unmarshal", err.Error())
 	}
 
 	w.LineEditProxyAddress.SetText(fields.ProxyAddress)
